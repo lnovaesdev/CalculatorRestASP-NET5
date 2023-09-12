@@ -2,10 +2,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Pomelo.EntityFrameworkCore.MySql.Storage;
+using RestWithASPNET.Model.Context;
+using RestWithASPNET.Services;
+using RestWithASPNET.Services.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +32,16 @@ namespace RestWithASPNET
         {
 
             services.AddControllers();
+
+            //Conexao bd 
+            var conecction = Configuration["MySQLConnection:MySQLConnectionString"];
+            services.AddDbContext<MySQLContext>(options => options.UseMySql(conecction));
+
+            //Injeção de Dependencia
+            services.AddScoped<IPersonService, PersonServiceImplementation>();
+            services.AddScoped<IVeiculoService, VeiculoServiceImplementation>();
+            services.AddScoped<ISeguroService, SeguroServiceImplementation>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
